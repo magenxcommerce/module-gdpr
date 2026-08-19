@@ -1,30 +1,58 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!--
-      One DataProvider virtualType per grid, each bound to that entity's
-      Collection - the same class stock Magento uses for admin grids
-      (Magento_Cms's Block/Page listings follow this exact shape).
+      Grid collections for the four admin listings.
+
+      These are SearchResult virtualTypes bound by table + resource model and
+      registered against the data source name each listing declares - the shape
+      Magento_Cms uses for the CMS Page/Block grids, and the one the generic
+      Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider
+      expects: it resolves its collection from this pool by data source name.
+
+      They are separate from the Model/ResourceModel/*/Collection classes the
+      resolvers, seeder and controllers use. Those extend Db\Collection\
+      AbstractCollection, which is not a SearchResultInterface, so the grid
+      reporting layer cannot consume them.
     -->
-    <virtualType name="Magenx_Gdpr_CookieGroupDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    <virtualType name="Magenx_Gdpr_CookieGroupGridCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
-            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\CookieGroup\Collection</argument>
+            <argument name="mainTable" xsi:type="string">magenx_gdpr_cookie_group</argument>
+            <argument name="resourceModel" xsi:type="string">Magenx\Gdpr\Model\ResourceModel\CookieGroup</argument>
+            <argument name="identifierName" xsi:type="string">group_id</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Magenx_Gdpr_CookieDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    <virtualType name="Magenx_Gdpr_CookieGridCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
-            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\Cookie\Collection</argument>
+            <argument name="mainTable" xsi:type="string">magenx_gdpr_cookie</argument>
+            <argument name="resourceModel" xsi:type="string">Magenx\Gdpr\Model\ResourceModel\Cookie</argument>
+            <argument name="identifierName" xsi:type="string">cookie_id</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Magenx_Gdpr_ConsentLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    <virtualType name="Magenx_Gdpr_ConsentLogGridCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
-            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\ConsentLog\Collection</argument>
+            <argument name="mainTable" xsi:type="string">magenx_gdpr_consent_log</argument>
+            <argument name="resourceModel" xsi:type="string">Magenx\Gdpr\Model\ResourceModel\ConsentLog</argument>
+            <argument name="identifierName" xsi:type="string">log_id</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Magenx_Gdpr_RequestDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    <virtualType name="Magenx_Gdpr_RequestGridCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
-            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\DsrRequest\Collection</argument>
+            <argument name="mainTable" xsi:type="string">magenx_gdpr_request</argument>
+            <argument name="resourceModel" xsi:type="string">Magenx\Gdpr\Model\ResourceModel\DsrRequest</argument>
+            <argument name="identifierName" xsi:type="string">request_id</argument>
         </arguments>
     </virtualType>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="cookie_group_listing_data_source" xsi:type="string">Magenx_Gdpr_CookieGroupGridCollection</item>
+                <item name="cookie_listing_data_source" xsi:type="string">Magenx_Gdpr_CookieGridCollection</item>
+                <item name="consent_log_listing_data_source" xsi:type="string">Magenx_Gdpr_ConsentLogGridCollection</item>
+                <item name="request_listing_data_source" xsi:type="string">Magenx_Gdpr_RequestGridCollection</item>
+            </argument>
+        </arguments>
+    </type>
 
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>

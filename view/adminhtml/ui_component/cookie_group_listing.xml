@@ -11,18 +11,20 @@
             <dep>cookie_group_listing.cookie_group_listing_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="cookie_group_listing_data_source">
-        <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Magenx_Gdpr_CookieGroupDataProvider</argument>
-            <argument name="name" xsi:type="string">cookie_group_listing_data_source</argument>
-            <argument name="primaryFieldName" xsi:type="string">group_id</argument>
-            <argument name="requestFieldName" xsi:type="string">id</argument>
-        </argument>
-        <argument name="data" xsi:type="array">
-            <item name="js_config" xsi:type="array">
-                <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
-            </item>
-        </argument>
+    <dataSource name="cookie_group_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">group_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magenx_Gdpr::cookie_groups</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="cookie_group_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>group_id</primaryFieldName>
+            </settings>
+        </dataProvider>
     </dataSource>
     <listingToolbar name="listing_top">
         <settings>
