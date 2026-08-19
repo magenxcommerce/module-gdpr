@@ -3,8 +3,12 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Magento_Config::config">
-                    <resource id="Magenx_Gdpr::config" title="GDPR Section" translate="title" sortOrder="10"/>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Magenx_Gdpr::config" title="GDPR Section" translate="title" sortOrder="10"/>
+                        </resource>
+                    </resource>
                 </resource>
                 <resource id="Magento_Customer::customer">
                     <resource id="Magenx_Gdpr::gdpr" title="GDPR" translate="title" sortOrder="100">
