@@ -17,6 +17,12 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
  * and marks the request approved. Only pending rows can reach this - export
  * and anonymize requests are already completed by the time an admin sees
  * them here.
+ *
+ * The row is moved out of "pending" *before* the anonymization runs. Doing it
+ * the other way round means a failure between the two leaves the customer's
+ * data destroyed and the request still showing as pending, so a second click
+ * would silently re-run an irreversible operation with no record that the
+ * first one already happened.
  */
 class Approve extends Action
 {
@@ -50,12 +56,18 @@ class Approve extends Action
             return $resultRedirect;
         }
 
+        $note = trim((string) $this->getRequest()->getParam('note'));
+
+        $model->setData('status', DsrRequest::STATUS_APPROVED);
+        $model->setData('resolved_at', $this->dateTime->gmtDate());
+        $model->setData('admin_note', $note !== '' ? $note : (string) __('Approved by a store administrator.'));
+
         try {
-            $this->anonymizer->anonymizeCustomer((int) $model->getData('customer_id'));
-            $model->setData('status', DsrRequest::STATUS_APPROVED);
-            $model->setData('resolved_at', $this->dateTime->gmtDate());
             $this->requestResource->save($model);
-            $this->messageManager->addSuccessMessage(__('The request was approved and the customer\'s data has been anonymized.'));
+            $this->anonymizer->anonymizeCustomer((int) $model->getData('customer_id'));
+            $this->messageManager->addSuccessMessage(
+                __('The request was approved and the customer\'s data has been anonymized.')
+            );
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage($e, __('Something went wrong while approving the request.'));
         }

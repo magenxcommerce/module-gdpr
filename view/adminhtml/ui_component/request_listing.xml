@@ -11,18 +11,20 @@
             <dep>request_listing.request_listing_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="request_listing_data_source">
-        <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Magenx_Gdpr_RequestDataProvider</argument>
-            <argument name="name" xsi:type="string">request_listing_data_source</argument>
-            <argument name="primaryFieldName" xsi:type="string">request_id</argument>
-            <argument name="requestFieldName" xsi:type="string">id</argument>
-        </argument>
-        <argument name="data" xsi:type="array">
-            <item name="js_config" xsi:type="array">
-                <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
-            </item>
-        </argument>
+    <dataSource name="request_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">request_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magenx_Gdpr::requests</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="request_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>request_id</primaryFieldName>
+            </settings>
+        </dataProvider>
     </dataSource>
     <listingToolbar name="listing_top">
         <settings>
@@ -71,6 +73,20 @@
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
                 <label translate="true">Resolved</label>
+            </settings>
+        </column>
+        <column name="customer_note">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Customer Note</label>
+                <visible>false</visible>
+            </settings>
+        </column>
+        <column name="admin_note">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Admin Note</label>
+                <visible>false</visible>
             </settings>
         </column>
         <actionsColumn name="actions" class="Magenx\Gdpr\Ui\Component\Listing\Column\RequestActions">

@@ -62,6 +62,7 @@
             "customer_id": true,
             "type": true,
             "status": true,
+            "customer_note": true,
             "admin_note": true,
             "requested_at": true,
             "resolved_at": true

@@ -72,7 +72,8 @@
         <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" comment="Customer ID"/>
         <column xsi:type="varchar" name="type" nullable="false" length="32" comment="export_data|anonymize_data|erase_data"/>
         <column xsi:type="varchar" name="status" nullable="false" length="32" default="pending" comment="pending|approved|denied|completed"/>
-        <column xsi:type="text" name="admin_note" nullable="true" comment="Admin Note"/>
+        <column xsi:type="text" name="customer_note" nullable="true" comment="Note supplied by the customer with the request"/>
+        <column xsi:type="text" name="admin_note" nullable="true" comment="Note recorded by the admin on approve/deny"/>
         <column xsi:type="timestamp" name="requested_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Requested At"/>
         <column xsi:type="timestamp" name="resolved_at" on_update="false" nullable="true" comment="Resolved At"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
