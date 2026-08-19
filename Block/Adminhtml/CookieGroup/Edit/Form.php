@@ -71,6 +71,11 @@ class Form extends Generic
         ]);
 
         $form->setValues($model->getData());
+        // Without this the form renders as bare fields: Data\Form::toHtml()
+        // emits the <form> element AND the form_key hidden input only when
+        // useContainer is set, so the admin Save button would post nothing and
+        // the Save controller would reject it for a missing form key.
+        $form->setUseContainer(true);
         $this->setForm($form);
 
         return $this;
