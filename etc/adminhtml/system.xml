@@ -18,9 +18,14 @@
                 </field>
             </group>
 
-            <group id="consent_log" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <!--
+              The three groups below drive cron jobs, and those jobs read config
+              at default scope only (no store id). Showing them per website /
+              per store would promise scoping the crons cannot honour.
+            -->
+            <group id="consent_log" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Consent Log</label>
-                <field id="retention_days" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="retention_days" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Retention (days)</label>
                     <validate>validate-digits validate-greater-than-zero</validate>
                     <comment>How long cookie-consent log rows are kept before the daily prune cron removes them.</comment>
@@ -30,9 +35,9 @@
                 </field>
             </group>
 
-            <group id="dormant_accounts" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="dormant_accounts" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Dormant Account Anonymization</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Danger: once enabled, the cron anonymizes matching customer accounts automatically. Back up the database first.</comment>
@@ -40,7 +45,7 @@
                         <field id="magenx_gdpr/general/enabled">1</field>
                     </depends>
                 </field>
-                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Days Since Last Order/Login</label>
                     <validate>validate-digits validate-greater-than-zero</validate>
                     <comment>A customer with no order and no sign-in for this many days is anonymized by the daily cron.</comment>
@@ -51,9 +56,9 @@
                 </field>
             </group>
 
-            <group id="old_orders" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="old_orders" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Old Order Anonymization</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Danger: once enabled, the cron anonymizes billing/shipping names and addresses on matching orders automatically. Order totals and items are never touched. Back up the database first.</comment>
@@ -61,7 +66,7 @@
                         <field id="magenx_gdpr/general/enabled">1</field>
                     </depends>
                 </field>
-                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Order Age (days)</label>
                     <validate>validate-digits validate-greater-than-zero</validate>
                     <comment>Orders older than this many days have their address PII anonymized by the daily cron.</comment>

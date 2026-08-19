@@ -32,10 +32,14 @@ class EntityActions extends Column
             return $dataSource;
         }
 
-        $indexField = $this->getData('config/indexField') ?? 'entity_id';
+        $indexField = $this->getData('config/indexField');
         $editUrlPath = $this->getData('config/editUrlPath');
         $deleteUrlPath = $this->getData('config/deleteUrlPath');
         $name = $this->getData('name');
+
+        if (!$indexField) {
+            return $dataSource;
+        }
 
         foreach ($dataSource['data']['items'] as &$item) {
             $id = $item[$indexField] ?? null;
@@ -59,6 +63,7 @@ class EntityActions extends Column
                 ];
             }
         }
+        unset($item);
 
         return $dataSource;
     }

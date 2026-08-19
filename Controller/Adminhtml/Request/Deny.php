@@ -41,9 +41,12 @@ class Deny extends Action
             return $resultRedirect;
         }
 
+        $note = trim((string) $this->getRequest()->getParam('note'));
+
         try {
             $model->setData('status', DsrRequest::STATUS_DENIED);
             $model->setData('resolved_at', $this->dateTime->gmtDate());
+            $model->setData('admin_note', $note !== '' ? $note : (string) __('Denied by a store administrator.'));
             $this->requestResource->save($model);
             $this->messageManager->addSuccessMessage(__('The request was denied.'));
         } catch (\Exception $e) {

@@ -73,6 +73,20 @@
                 <label translate="true">Resolved</label>
             </settings>
         </column>
+        <column name="customer_note">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Customer Note</label>
+                <visible>false</visible>
+            </settings>
+        </column>
+        <column name="admin_note">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Admin Note</label>
+                <visible>false</visible>
+            </settings>
+        </column>
         <actionsColumn name="actions" class="Magenx\Gdpr\Ui\Component\Listing\Column\RequestActions">
             <settings>
                 <indexField>request_id</indexField>

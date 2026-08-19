@@ -39,7 +39,10 @@ class RequestActions extends Column
             if (($item['status'] ?? null) !== DsrRequest::STATUS_PENDING) {
                 continue;
             }
-            $id = $item['request_id'];
+            $id = $item['request_id'] ?? null;
+            if ($id === null) {
+                continue;
+            }
             $item[$name]['approve'] = [
                 'href' => $this->urlBuilder->getUrl('magenx_gdpr/request/approve', ['id' => $id]),
                 'label' => __('Approve'),
@@ -53,6 +56,7 @@ class RequestActions extends Column
                 'label' => __('Deny'),
             ];
         }
+        unset($item);
 
         return $dataSource;
     }
