@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="magenx_gdpr_anonymize_dormant_accounts" instance="Magenx\Gdpr\Model\Cron\AnonymizeDormantAccounts" method="execute">
+            <schedule>0 2 * * *</schedule>
+        </job>
+        <job name="magenx_gdpr_anonymize_old_orders" instance="Magenx\Gdpr\Model\Cron\AnonymizeOldOrders" method="execute">
+            <schedule>30 2 * * *</schedule>
+        </job>
+        <job name="magenx_gdpr_prune_consent_log" instance="Magenx\Gdpr\Model\Cron\PruneConsentLog" method="execute">
+            <schedule>0 3 * * *</schedule>
+        </job>
+    </group>
+</config>

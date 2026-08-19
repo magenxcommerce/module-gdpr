@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magenx" translate="label" sortOrder="400">
+            <label>Magenx</label>
+        </tab>
+        <section id="magenx_gdpr" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>GDPR</label>
+            <tab>magenx</tab>
+            <resource>Magenx_Gdpr::config</resource>
+
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Master switch. Turns off the cookie registry query and consent/request mutations for this store when disabled.</comment>
+                </field>
+            </group>
+
+            <group id="consent_log" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Consent Log</label>
+                <field id="retention_days" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Retention (days)</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <comment>How long cookie-consent log rows are kept before the daily prune cron removes them.</comment>
+                    <depends>
+                        <field id="magenx_gdpr/general/enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <group id="dormant_accounts" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Dormant Account Anonymization</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Danger: once enabled, the cron anonymizes matching customer accounts automatically. Back up the database first.</comment>
+                    <depends>
+                        <field id="magenx_gdpr/general/enabled">1</field>
+                    </depends>
+                </field>
+                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Days Since Last Order/Login</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <comment>A customer with no order and no sign-in for this many days is anonymized by the daily cron.</comment>
+                    <depends>
+                        <field id="magenx_gdpr/general/enabled">1</field>
+                        <field id="magenx_gdpr/dormant_accounts/enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <group id="old_orders" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Old Order Anonymization</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Danger: once enabled, the cron anonymizes billing/shipping names and addresses on matching orders automatically. Order totals and items are never touched. Back up the database first.</comment>
+                    <depends>
+                        <field id="magenx_gdpr/general/enabled">1</field>
+                    </depends>
+                </field>
+                <field id="days" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order Age (days)</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <comment>Orders older than this many days have their address PII anonymized by the daily cron.</comment>
+                    <depends>
+                        <field id="magenx_gdpr/general/enabled">1</field>
+                        <field id="magenx_gdpr/old_orders/enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
