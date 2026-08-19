@@ -41,13 +41,22 @@ has no `Magento_GraphQl` dependency of its own.
 - **Retention automation** (all off by default except the log prune) -
   optional cron to anonymize dormant accounts, optional cron to anonymize old
   order addresses, and an always-on cron that prunes the consent log past its
-  retention window.
+  retention window. "Dormant" means no sign-in (`customer_log.last_login_at`)
+  and no order within the window, not merely an old account. Each anonymization
+  cron works through at most 200 records per run, so a backlog drains over
+  successive nights; the old-order cron tracks its position with a persisted
+  cursor so each run picks up where the last one stopped.
 
 ## Admin
 
 **Stores > Settings > Configuration > Magenx > GDPR** - master enable,
 consent log retention, and the two anonymization automations (each off by
 default; read the in-admin warning before enabling).
+
+The master enable is scoped per store view and is honoured by every GraphQL
+entry point. The three retention groups below it are default-scope only,
+because the cron jobs they drive read config without a store id - showing them
+per website would promise scoping the crons cannot deliver.
 
 **Customers > GDPR**:
 - *Cookie Groups* / *Cookies* - manage the registry that feeds the storefront
@@ -88,14 +97,46 @@ bin/magento cache:clean
 Add `magenxcommerce/module-gdpr-graph-ql` as well to expose the GraphQL
 surface described below.
 
+## What anonymization actually touches
+
+`Model/Anonymizer` is the single place PII is scrubbed, used identically by the
+self-service `anonymize_data` mutation and the admin-approved erase flow. For
+one customer it rewrites:
+
+- `customer_entity` - name, email, date of birth, gender, tax/VAT number
+- `customer_address_entity` - name, street, city, postcode, phone, company,
+  fax, VAT id on every address
+- `sales_order` - the denormalized `customer_email` / `customer_firstname` /
+  `customer_lastname` / `customer_middlename` / `customer_dob` /
+  `customer_taxvat` columns on every order they placed
+- `sales_order_address` - name, street, city, postcode, phone, email, company,
+  fax, VAT id on both billing and shipping
+- `sales_order_grid` - the flat table the admin order grid reads, so the old
+  name and email are not still one grid search away
+- `newsletter_subscriber` - the stored address, keeping the subscription row so
+  an unsubscribe is not silently reset
+
+It then revokes the customer's access tokens, so an erased account is not left
+signed in on every device it was signed in on.
+
+Region is left alone in both paths: a state or province is too coarse to
+identify anyone, and Magento's customer `AddressInterface::setRegion` takes a
+`RegionInterface` rather than null.
+
+Order totals, items and financial history are never touched - those are the
+merchant's accounting records, not the customer's personal data.
+
 ## Verification status
 
-Built and checked in an environment with no PHP runtime or Magento
-installation available: every PHP file passes `php -l`, every XML file
-parses (`xmllint --noout`), and `composer.json` / `db_schema_whitelist.json`
-are valid JSON. **Not yet verified**: `setup:upgrade` against a real
-database and the admin grids/forms rendering in a browser. Do that before
-shipping to production.
+Checked without a Magento installation available: every PHP file passes
+`php -l`, every XML file parses, and `composer.json` /
+`db_schema_whitelist.json` are valid JSON. **Not yet verified**:
+`setup:upgrade` against a real database and the admin grids/forms rendering in
+a browser. Do that before shipping to production.
+
+If you enable the old-order cron on an existing store, confirm it is making
+progress: run `bin/magento cron:run --group=default` twice and check that the
+second run anonymizes a *different* set of orders than the first.
 
 ## Known limitations / follow-ups
 
@@ -103,8 +144,15 @@ shipping to production.
   hard delete - Magento customer/order records can't be dropped without
   breaking order history, so anonymization is the erasure mechanism (see
   `Model/Anonymizer.php`).
-- `AnonymizeOldOrders` processes up to 200 orders per run; a large backlog is
-  worked off gradually across daily runs rather than all at once.
+- Anonymization covers this module's tables and Magento's core customer/sales
+  tables. It does not reach into third-party modules that hold personal data of
+  their own; a store running those has to extend `Model/Anonymizer` for erasure
+  to be complete.
+- Each anonymization cron processes up to 200 records per run; a large backlog
+  is worked off gradually across daily runs rather than all at once.
 - No store-view scoping on the cookie registry - this app runs one storefront
   across locale routes, so a global registry was simpler than an unused scope
   dimension. Revisit if a genuinely separate storefront is added later.
+- `admin_note` is set automatically when an admin approves or denies from the
+  grid, or from a `note` request parameter. There is no admin form for typing a
+  custom note yet.
