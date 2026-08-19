@@ -6,6 +6,7 @@ namespace Magenx\Gdpr\Model;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
@@ -58,6 +59,7 @@ class Anonymizer
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly OrderAddressRepositoryInterface $orderAddressRepository,
         private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly SortOrderBuilder $sortOrderBuilder,
         private readonly CustomerTokenServiceInterface $customerTokenService,
         private readonly ResourceConnection $resourceConnection,
         private readonly LoggerInterface $logger
@@ -88,6 +90,14 @@ class Anonymizer
      * anonymized placeholders, then does the same to their order history,
      * newsletter subscription and any live API tokens. The customer id and the
      * orders themselves are kept - only who the records identify is erased.
+     *
+     * The steps span several repositories and cannot share one transaction, so
+     * a failure part way through leaves a partially anonymized customer. That
+     * is recoverable rather than corrupting: every step writes fixed
+     * placeholders derived from the customer id, so the whole method is
+     * idempotent and re-running it finishes the job. Callers keep the request
+     * row out of a "done" state until this returns, so a retry is always
+     * reachable.
      */
     public function anonymizeCustomer(int $customerId): void
     {
@@ -166,16 +176,23 @@ class Anonymizer
      * Runs every order the customer placed through anonymizeOrderAddresses.
      * Paged rather than fetched in one go: a long-standing customer can have
      * thousands of orders, and each page is released before the next is loaded.
-     * The filter is customer_id alone, which anonymization does not change, so
-     * the result set is stable and the offset can safely advance.
+     *
+     * Sorted by entity_id so the pages partition the result set: an unsorted
+     * getList has no guaranteed row order between calls, which for a customer
+     * with more than one page means an order can appear on two pages and
+     * another on none - and the one on none keeps its PII.
      */
     private function anonymizeCustomerOrders(int $customerId): void
     {
         $pageSize = 100;
         $page = 1;
+        $sortOrder = $this->sortOrderBuilder->setField('entity_id')->setAscendingDirection()->create();
 
         do {
-            $criteria = $this->searchCriteriaBuilder->addFilter('customer_id', $customerId)->create();
+            $criteria = $this->searchCriteriaBuilder
+                ->addFilter('customer_id', $customerId)
+                ->addSortOrder($sortOrder)
+                ->create();
             $criteria->setPageSize($pageSize);
             $criteria->setCurrentPage($page);
 
