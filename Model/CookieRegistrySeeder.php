@@ -13,11 +13,17 @@ use Magenx\Gdpr\Model\ResourceModel\CookieGroup\CollectionFactory as CookieGroup
  * Installs / restores the default cookie-group and cookie rows.
  *
  * The cookie list intentionally reflects only what this headless storefront
- * actually sets in the browser (see apps/theme/src/lib/auth-cookie.ts and
- * auth.ts in the magenxcommerce repo) plus the Google Analytics cookies a
- * merchant would see once GTM/GA is configured. It is not a generic
- * "every cookie a Magento site might set" list — the whole point of this
- * module is that the cookie policy page stops guessing.
+ * actually sets in the browser (see apps/theme/src/lib/auth-cookie.ts, auth.ts
+ * and the language switcher in the magenxcommerce repo) plus the Google
+ * Analytics cookies GTM writes once a visitor accepts analytics. It is not a
+ * generic "every cookie a Magento site might set" list — the whole point of
+ * this module is that the cookie policy page stops guessing.
+ *
+ * The Google Ads / DoubleClick rows are seeded inactive: whether they are ever
+ * written depends on which tags a merchant puts in their GTM container, which
+ * this module cannot see. Activate them in Customers > GDPR > Cookies when ad
+ * tags are added — and conversely deactivate the GA rows on a store that runs
+ * no GTM container at all.
  *
  * Used both by the install-time data patch and by the
  * `magenx:gdpr:seed-cookies` CLI command, so there is one seed dataset.
@@ -116,12 +122,21 @@ class CookieRegistrySeeder
             'sort_order' => 60,
         ],
         [
+            'name' => 'NEXT_LOCALE',
+            'group_code' => 'necessary',
+            'source' => 'storefront',
+            'purpose' => 'Remembers the language you chose in the language switcher. Only written when you pick one.',
+            'duration_label' => '1 year',
+            'is_active' => 1,
+            'sort_order' => 70,
+        ],
+        [
             'name' => '_ga',
             'group_code' => 'analytics',
             'source' => 'google',
             'purpose' => 'Google Analytics - distinguishes unique visitors.',
             'duration_label' => '2 years',
-            'is_active' => 0,
+            'is_active' => 1,
             'sort_order' => 10,
         ],
         [
@@ -130,7 +145,7 @@ class CookieRegistrySeeder
             'source' => 'google',
             'purpose' => 'Google Analytics - maintains session state for a specific GA4 property.',
             'duration_label' => '2 years',
-            'is_active' => 0,
+            'is_active' => 1,
             'sort_order' => 20,
         ],
         [
@@ -139,6 +154,33 @@ class CookieRegistrySeeder
             'source' => 'google',
             'purpose' => 'Google Analytics - distinguishes visitors over a short window.',
             'duration_label' => '24 hours',
+            'is_active' => 1,
+            'sort_order' => 30,
+        ],
+        [
+            'name' => '_gcl_au',
+            'group_code' => 'marketing',
+            'source' => 'google',
+            'purpose' => 'Google Ads - links a purchase back to the ad you clicked, so we can measure which ads work.',
+            'duration_label' => '90 days',
+            'is_active' => 0,
+            'sort_order' => 10,
+        ],
+        [
+            'name' => 'IDE',
+            'group_code' => 'marketing',
+            'source' => 'google',
+            'purpose' => 'Google DoubleClick - measures ad performance and shows you our ads on other sites.',
+            'duration_label' => '13 months',
+            'is_active' => 0,
+            'sort_order' => 20,
+        ],
+        [
+            'name' => 'test_cookie',
+            'group_code' => 'marketing',
+            'source' => 'google',
+            'purpose' => 'Google DoubleClick - short-lived check that your browser accepts cookies at all.',
+            'duration_label' => '15 minutes',
             'is_active' => 0,
             'sort_order' => 30,
         ],
