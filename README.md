@@ -24,8 +24,13 @@ has no `Magento_GraphQl` dependency of its own.
   `analytics` / `marketing` / `preferences`, matching the storefront's own
   existing consent categories) and the individual cookies in each. Seeded on
   install with the cookies this app actually sets (`magenx_ct`, `magenx_auth`,
-  the Auth.js broker session/CSRF cookies) plus the Google Analytics cookies,
-  inactive by default until GTM/GA is actually configured. Exposed as
+  the Auth.js broker session/CSRF cookies, and `NEXT_LOCALE` for the language
+  switcher) plus the Google cookies. The Google Analytics rows are **active**
+  by default, matching the GTM container this stack ships with - deactivate
+  them if your store runs no GTM. The Google Ads / DoubleClick rows (`_gcl_au`,
+  `IDE`, `test_cookie`) are **inactive** by default, since whether they are
+  written depends on which tags are in your container - activate them when you
+  add ad tags. Only active cookies reach the storefront. Exposed as
   `gdprCookieGroups` (see GraphQL surface below) for the storefront's cookie
   policy page.
 - **Consent logging** - `submitCookieConsent` records every cookie-banner
