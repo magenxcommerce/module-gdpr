@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.2...v1.0.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* Expand anonymization to cover all customer PII across tables ([#7](https://github.com/magenxcommerce/module-gdpr/issues/7)) ([692a9aa](https://github.com/magenxcommerce/module-gdpr/commit/692a9aad5428230146838d75af8aad69ce80ac78))
+
 ## [1.0.2](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.1...v1.0.2) (2026-08-19)
 
 
