@@ -9,13 +9,14 @@ The storefront needs to show visitors the cookies the site *actually* sets
 (not a generic guess), record what they consented to, and give customers a
 self-service way to exercise GDPR rights - export, anonymize, or erase their
 data - with an admin view over that history. There is no Luma frontend here:
-the storefront is a separate Next.js app that consumes this module purely
-over GraphQL. `view/adminhtml` exists only for the merchant-facing cookie
-registry and request queue, which have no storefront equivalent.
+the storefront is a separate Next.js app. `view/adminhtml` exists only for
+the merchant-facing cookie registry and request queue, which have no
+storefront equivalent.
 
-This is a self-contained module (data + GraphQL + admin UI + cron all in one
-package) rather than a `module-gdpr` / `module-gdpr-graph-ql` pair - see the
-comment in `etc/module.xml` for why.
+This module owns the data, admin UI and cron. Its GraphQL surface lives in
+the companion [`magenxcommerce/module-gdpr-graph-ql`](https://github.com/magenxcommerce/module-gdpr-graph-ql)
+module - the usual Magenx `<Name>` / `<Name>GraphQl` split - so this module
+has no `Magento_GraphQl` dependency of its own.
 
 ## What it does
 
@@ -24,8 +25,9 @@ comment in `etc/module.xml` for why.
   existing consent categories) and the individual cookies in each. Seeded on
   install with the cookies this app actually sets (`magenx_ct`, `magenx_auth`,
   the Auth.js broker session/CSRF cookies) plus the Google Analytics cookies,
-  inactive by default until GTM/GA is actually configured. Exposed over
-  GraphQL as `gdprCookieGroups` for the storefront's cookie policy page.
+  inactive by default until GTM/GA is actually configured. Exposed as
+  `gdprCookieGroups` (see GraphQL surface below) for the storefront's cookie
+  policy page.
 - **Consent logging** - `submitCookieConsent` records every cookie-banner
   decision (customer id when signed in, IP, which categories were granted)
   for an audit trail. Guest-usable, since most consent decisions happen
@@ -57,10 +59,12 @@ default; read the in-admin warning before enabling).
 
 ## GraphQL surface
 
-See `etc/schema.graphqls`. Root `Query`/`Mutation` fields (not nested under
-`Customer`): `gdprCookieGroups` (public, cacheable), `submitCookieConsent`
-(guest or customer), `myGdprRequests` / `myPersonalDataExport` /
-`requestGdprAction` (customer-only).
+Exposed by the companion [`magenxcommerce/module-gdpr-graph-ql`](https://github.com/magenxcommerce/module-gdpr-graph-ql)
+module: root `Query`/`Mutation` fields (not nested under `Customer`) -
+`gdprCookieGroups` (public, cacheable), `submitCookieConsent` (guest or
+customer), `myGdprRequests` / `myPersonalDataExport` / `requestGdprAction`
+(customer-only). Install that module alongside this one to expose these
+over GraphQL.
 
 ## CLI
 
@@ -81,14 +85,17 @@ bin/magento setup:upgrade
 bin/magento cache:clean
 ```
 
+Add `magenxcommerce/module-gdpr-graph-ql` as well to expose the GraphQL
+surface described below.
+
 ## Verification status
 
 Built and checked in an environment with no PHP runtime or Magento
 installation available: every PHP file passes `php -l`, every XML file
 parses (`xmllint --noout`), and `composer.json` / `db_schema_whitelist.json`
 are valid JSON. **Not yet verified**: `setup:upgrade` against a real
-database, a live GraphQL round-trip, and the admin grids/forms rendering in
-a browser. Do that before shipping to production.
+database and the admin grids/forms rendering in a browser. Do that before
+shipping to production.
 
 ## Known limitations / follow-ups
 
