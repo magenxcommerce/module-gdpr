@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.3...v1.0.4) (2026-08-19)
+
+
+### Bug Fixes
+
+* Add language switcher and Google Ads cookies to GDPR registry ([#9](https://github.com/magenxcommerce/module-gdpr/issues/9)) ([7a04812](https://github.com/magenxcommerce/module-gdpr/commit/7a04812b933e7468be03cd490f277eba2555a621))
+* Declare NEXT_LOCALE, activate GA cookies and seed Google Ads rows ([7a04812](https://github.com/magenxcommerce/module-gdpr/commit/7a04812b933e7468be03cd490f277eba2555a621))
+
 ## [1.0.3](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.2...v1.0.3) (2026-08-19)
 
 
