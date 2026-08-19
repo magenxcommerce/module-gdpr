@@ -67,7 +67,7 @@ class Anonymizer
     }
 
     /** The placeholder address a given customer id is anonymized to. */
-    public static function anonymizedEmail(int $customerId): string
+    private function anonymizedEmail(int $customerId): string
     {
         return sprintf('anonymized-customer-%d@%s', $customerId, self::ANONYMIZED_EMAIL_DOMAIN);
     }
@@ -101,7 +101,7 @@ class Anonymizer
      */
     public function anonymizeCustomer(int $customerId): void
     {
-        $email = self::anonymizedEmail($customerId);
+        $email = $this->anonymizedEmail($customerId);
 
         $customer = $this->customerRepository->getById($customerId);
         $customer->setFirstname(self::ANONYMIZED_LABEL);
@@ -150,7 +150,7 @@ class Anonymizer
     {
         $orderId = (int) $order->getEntityId();
         $email = $order->getCustomerId()
-            ? self::anonymizedEmail((int) $order->getCustomerId())
+            ? $this->anonymizedEmail((int) $order->getCustomerId())
             : sprintf('anonymized-order-%d@%s', $orderId, self::ANONYMIZED_EMAIL_DOMAIN);
 
         foreach (array_filter([$order->getBillingAddress(), $order->getShippingAddress()]) as $address) {
