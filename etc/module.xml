@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  Self-contained GDPR module: cookie registry, consent logging and
+  data-subject request tracking, including its own GraphQL surface.
+
+  Unlike the usual Magenx <Name> / <Name>GraphQl split (used when a module
+  forks or wraps an existing stock/Mage-OS module and must keep that half
+  separable), Gdpr has no stock Magento equivalent to wrap, so the schema
+  lives here directly. No Luma frontend is added (no view/frontend, no
+  frontend controllers/layout) - the storefront is Next.js and consumes this
+  module purely over GraphQL. view/adminhtml is used for the merchant-facing
+  cookie registry and request queue, which have no storefront equivalent.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Magenx_Gdpr">
+        <sequence>
+            <module name="Magento_Customer"/>
+            <module name="Magento_Sales"/>
+            <module name="Magento_GraphQl"/>
+        </sequence>
+    </module>
+</config>

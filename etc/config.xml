@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magenx_gdpr>
+            <general>
+                <enabled>1</enabled>
+            </general>
+            <consent_log>
+                <retention_days>180</retention_days>
+            </consent_log>
+            <dormant_accounts>
+                <enabled>0</enabled>
+                <days>365</days>
+            </dormant_accounts>
+            <old_orders>
+                <enabled>0</enabled>
+                <days>730</days>
+            </old_orders>
+        </magenx_gdpr>
+    </default>
+</config>

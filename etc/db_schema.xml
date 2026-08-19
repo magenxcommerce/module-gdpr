@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="magenx_gdpr_cookie_group" resource="default" engine="innodb" comment="GDPR Cookie Group">
+        <column xsi:type="int" name="group_id" unsigned="true" nullable="false" identity="true" comment="Group ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="32" comment="Category Code"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Label"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="smallint" name="is_required" unsigned="true" nullable="false" default="0" comment="Is Required"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="smallint" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="group_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENX_GDPR_COOKIE_GROUP_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <table name="magenx_gdpr_cookie" resource="default" engine="innodb" comment="GDPR Cookie Registry Entry">
+        <column xsi:type="int" name="cookie_id" unsigned="true" nullable="false" identity="true" comment="Cookie ID"/>
+        <column xsi:type="int" name="group_id" unsigned="true" nullable="false" comment="Group ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="64" comment="Cookie Name (trailing * matches a prefix)"/>
+        <column xsi:type="varchar" name="source" nullable="false" length="32" default="storefront" comment="Set By (storefront|auth|google)"/>
+        <column xsi:type="text" name="purpose" nullable="true" comment="Purpose"/>
+        <column xsi:type="varchar" name="duration_label" nullable="true" length="64" comment="Duration (display text)"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="smallint" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="cookie_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENX_GDPR_COOKIE_NAME">
+            <column name="name"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENX_GDPR_COOKIE_GROUP_ID_MAGENX_GDPR_COOKIE_GROUP_GROUP_ID"
+                    table="magenx_gdpr_cookie" column="group_id"
+                    referenceTable="magenx_gdpr_cookie_group" referenceColumn="group_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENX_GDPR_COOKIE_GROUP_ID" indexType="btree">
+            <column name="group_id"/>
+        </index>
+    </table>
+
+    <table name="magenx_gdpr_consent_log" resource="default" engine="innodb" comment="GDPR Cookie Consent Log">
+        <column xsi:type="int" name="log_id" unsigned="true" nullable="false" identity="true" comment="Log ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Customer ID (null for guest)"/>
+        <column xsi:type="varchar" name="ip_address" nullable="true" length="45" comment="IP Address"/>
+        <column xsi:type="varchar" name="context" nullable="false" length="32" default="cookie_banner" comment="Where consent was given"/>
+        <column xsi:type="smallint" name="necessary" unsigned="true" nullable="false" default="1" comment="Necessary"/>
+        <column xsi:type="smallint" name="analytics" unsigned="true" nullable="false" default="0" comment="Analytics"/>
+        <column xsi:type="smallint" name="marketing" unsigned="true" nullable="false" default="0" comment="Marketing"/>
+        <column xsi:type="smallint" name="preferences" unsigned="true" nullable="false" default="0" comment="Preferences"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="log_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENX_GDPR_CONSENT_LOG_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magenx_gdpr_consent_log" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id"
+                    onDelete="SET NULL"/>
+        <index referenceId="MAGENX_GDPR_CONSENT_LOG_CUSTOMER_ID_CREATED_AT" indexType="btree">
+            <column name="customer_id"/>
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENX_GDPR_CONSENT_LOG_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+    </table>
+
+    <table name="magenx_gdpr_request" resource="default" engine="innodb" comment="GDPR Data Subject Request">
+        <column xsi:type="int" name="request_id" unsigned="true" nullable="false" identity="true" comment="Request ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" comment="Customer ID"/>
+        <column xsi:type="varchar" name="type" nullable="false" length="32" comment="export_data|anonymize_data|erase_data"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="32" default="pending" comment="pending|approved|denied|completed"/>
+        <column xsi:type="text" name="admin_note" nullable="true" comment="Admin Note"/>
+        <column xsi:type="timestamp" name="requested_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Requested At"/>
+        <column xsi:type="timestamp" name="resolved_at" on_update="false" nullable="true" comment="Resolved At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="request_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENX_GDPR_REQUEST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magenx_gdpr_request" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENX_GDPR_REQUEST_CUSTOMER_ID_STATUS" indexType="btree">
+            <column name="customer_id"/>
+            <column name="status"/>
+        </index>
+    </table>
+
+</schema>

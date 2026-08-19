@@ -1,0 +1,77 @@
+{
+    "magenx_gdpr_cookie_group": {
+        "column": {
+            "group_id": true,
+            "code": true,
+            "label": true,
+            "description": true,
+            "is_required": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "index": {},
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENX_GDPR_COOKIE_GROUP_CODE": true
+        }
+    },
+    "magenx_gdpr_cookie": {
+        "column": {
+            "cookie_id": true,
+            "group_id": true,
+            "name": true,
+            "source": true,
+            "purpose": true,
+            "duration_label": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "index": {
+            "MAGENX_GDPR_COOKIE_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENX_GDPR_COOKIE_NAME": true,
+            "MAGENX_GDPR_COOKIE_GROUP_ID_MAGENX_GDPR_COOKIE_GROUP_GROUP_ID": true
+        }
+    },
+    "magenx_gdpr_consent_log": {
+        "column": {
+            "log_id": true,
+            "customer_id": true,
+            "ip_address": true,
+            "context": true,
+            "necessary": true,
+            "analytics": true,
+            "marketing": true,
+            "preferences": true,
+            "created_at": true
+        },
+        "index": {
+            "MAGENX_GDPR_CONSENT_LOG_CUSTOMER_ID_CREATED_AT": true,
+            "MAGENX_GDPR_CONSENT_LOG_CREATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENX_GDPR_CONSENT_LOG_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true
+        }
+    },
+    "magenx_gdpr_request": {
+        "column": {
+            "request_id": true,
+            "customer_id": true,
+            "type": true,
+            "status": true,
+            "admin_note": true,
+            "requested_at": true,
+            "resolved_at": true
+        },
+        "index": {
+            "MAGENX_GDPR_REQUEST_CUSTOMER_ID_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENX_GDPR_REQUEST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true
+        }
+    }
+}

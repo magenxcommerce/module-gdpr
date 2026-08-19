@@ -1,0 +1,26 @@
+{
+    "name": "magenxcommerce/module-gdpr",
+    "description": "Cookie registry, consent logging and data-subject request tracking for a headless Magento storefront.",
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0||~8.4.0",
+        "magento/framework": "*",
+        "magento/module-customer": "*",
+        "magento/module-sales": "*",
+        "magento/module-graph-ql": "*"
+    },
+    "type": "magento2-module",
+    "license": [
+        "MIT"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magenx\\Gdpr\\": ""
+        }
+    }
+}

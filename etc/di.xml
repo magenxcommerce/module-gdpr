@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--
+      One DataProvider virtualType per grid, each bound to that entity's
+      Collection - the same class stock Magento uses for admin grids
+      (Magento_Cms's Block/Page listings follow this exact shape).
+    -->
+    <virtualType name="Magenx_Gdpr_CookieGroupDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\CookieGroup\Collection</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magenx_Gdpr_CookieDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\Cookie\Collection</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magenx_Gdpr_ConsentLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\ConsentLog\Collection</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magenx_Gdpr_RequestDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Magenx\Gdpr\Model\ResourceModel\DsrRequest\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="magenx_gdpr_seed_cookies" xsi:type="object">Magenx\Gdpr\Console\Command\SeedCookiesCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magenx_Gdpr::gdpr" title="GDPR" module="Magenx_Gdpr" sortOrder="100"
+             resource="Magenx_Gdpr::gdpr" parent="Magento_Customer::customer"/>
+        <add id="Magenx_Gdpr::cookie_groups" title="Cookie Groups" module="Magenx_Gdpr" sortOrder="10"
+             resource="Magenx_Gdpr::cookie_groups" parent="Magenx_Gdpr::gdpr"
+             action="magenx_gdpr/cookieGroup/index"/>
+        <add id="Magenx_Gdpr::cookies" title="Cookies" module="Magenx_Gdpr" sortOrder="20"
+             resource="Magenx_Gdpr::cookies" parent="Magenx_Gdpr::gdpr"
+             action="magenx_gdpr/cookie/index"/>
+        <add id="Magenx_Gdpr::consent_log" title="Consent Log" module="Magenx_Gdpr" sortOrder="30"
+             resource="Magenx_Gdpr::consent_log" parent="Magenx_Gdpr::gdpr"
+             action="magenx_gdpr/consentLog/index"/>
+        <add id="Magenx_Gdpr::requests" title="Data Requests" module="Magenx_Gdpr" sortOrder="40"
+             resource="Magenx_Gdpr::requests" parent="Magenx_Gdpr::gdpr"
+             action="magenx_gdpr/request/index"/>
+    </menu>
+</config>

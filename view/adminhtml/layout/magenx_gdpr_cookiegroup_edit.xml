@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magenx\Gdpr\Block\Adminhtml\CookieGroup\Edit" name="magenx_gdpr_cookiegroup_edit">
+                <block class="Magenx\Gdpr\Block\Adminhtml\CookieGroup\Edit\Form" name="magenx_gdpr_cookiegroup_edit_form" as="form"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
