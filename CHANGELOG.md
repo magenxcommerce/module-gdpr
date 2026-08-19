@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.1...v1.0.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* Fix acl.xml nest Magento_Config::config under the real core path ([#5](https://github.com/magenxcommerce/module-gdpr/issues/5)) ([4e96069](https://github.com/magenxcommerce/module-gdpr/commit/4e96069ce2e1b937f36590a1763abf524006804d))
+
 ## [1.0.1](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.0...v1.0.1) (2026-08-19)
 
 
