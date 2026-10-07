@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.4...v1.0.5) (2026-10-07)
+
+
+### Bug Fixes
+
+* declare PHP 8.3, 8.4 and 8.5 support ([6c7553a](https://github.com/magenxcommerce/module-gdpr/commit/6c7553a67e9e8d85c7f5ca570c851ba03e93b5df))
+* Update PHP version requirements to 8.3+ ([#11](https://github.com/magenxcommerce/module-gdpr/issues/11)) ([6c7553a](https://github.com/magenxcommerce/module-gdpr/commit/6c7553a67e9e8d85c7f5ca570c851ba03e93b5df))
+
 ## [1.0.4](https://github.com/magenxcommerce/module-gdpr/compare/v1.0.3...v1.0.4) (2026-08-19)
 
 
